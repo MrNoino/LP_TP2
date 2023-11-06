@@ -1,0 +1,12 @@
+Utilizar o AccuWeather API para ter a previsão do tempo (possibilidade de chuva no próximo dia).
+Descobrir a umidade do solo (pode ser random, não é o ideal)
+Determinar um valor ideal e intervalo de variação, configuravel.
+
+O cliente utiliza o html para ver os últimos 60 resultados
+
+Precissamos planear as regas de acordo com a humidade do solo e o valor ideal, contudo de acordo 
+com a previsão de chuva podemos ou não regar, podemos usar o intervalo de variação para determinar 
+quando a rega é urgente ou podemos esperar pela chuva.
+
+Rever chart.js (parece desatualizado), não está construindo os gráficos necessários para a aplicação.
+
