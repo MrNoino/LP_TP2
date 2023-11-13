@@ -2,28 +2,30 @@
 #import adafruit_sht31d
 #import board
 #import serial
+import random
 import threading
 import datetime
 import csv
 import os
+import time
 
 class Logger(object):
     def __init__(self, port='/dev/ttyACM0', filename='data.csv'):
         '''self.ser = serial.Serial(port)
         self.i2c = board.I2C()
         self.tsl = adafruit_tsl2591.TSL2591(self.i2c)
-        self.sht = adafruit_sht31d.SHT31D(self.i2c)
+        self.sht = adafruit_sht31d.SHT31D(self.i2c)'''
         self.filename = filename
         self.clb = None
         self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
-        self.thr.start()'''
+        self.thr.start()
     
     def read_data(self):
         while True:
-            data = self.ser.readline().decode()
+            # data = self.ser.readline().decode()
             obj = {}
-            if data[0] == '$' and data[-3] == '#':
+            '''if data[0] == '$' and data[-3] == '#':
                 params = data.split(',')
                 for p in params:
                     if '=' in p:
@@ -35,7 +37,25 @@ class Logger(object):
                 #obj['timestamp'] = datetime.datetime.now()
                 self.store_data(obj)
                 if self.clb is not None:
-                    self.clb(obj)
+                    self.clb(obj)'''
+            
+            obj['winddir'] = float(random.random())
+            obj['windspeedmph'] = float(random.random())
+            obj['windgustdir'] = float(random.random())
+            obj['windspdmph_avg2m'] = float(random.random())
+            obj['winddir_avg2m'] = float(random.random())
+            obj['windgustmph_10m'] = float(random.random())
+            obj['windgustdir_10m'] = float(random.random())
+            obj['humidity'] = float(random.random())
+            obj['tempf'] = float(random.random())
+            obj['pressure'] = float(random.random())
+            obj['rainin'] = float(random.random())
+            obj['dailyrainin'] = float(random.random())
+            self.store_data(obj)
+            if self.clb is not None:
+                self.clb(obj)
+            time.sleep(5)
+                    
     
     def store_data(self, data):
         file_exists = os.path.isfile(self.filename)
