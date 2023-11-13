@@ -1,7 +1,7 @@
-import adafruit_tsl2591
-import adafruit_sht31d
-import board
-import serial
+#import adafruit_tsl2591
+#import adafruit_sht31d
+#import board
+#import serial
 import threading
 import datetime
 import csv
@@ -9,7 +9,7 @@ import os
 
 class Logger(object):
     def __init__(self, port='/dev/ttyACM0', filename='data.csv'):
-        self.ser = serial.Serial(port)
+        '''self.ser = serial.Serial(port)
         self.i2c = board.I2C()
         self.tsl = adafruit_tsl2591.TSL2591(self.i2c)
         self.sht = adafruit_sht31d.SHT31D(self.i2c)
@@ -17,7 +17,7 @@ class Logger(object):
         self.clb = None
         self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
-        self.thr.start()
+        self.thr.start()'''
     
     def read_data(self):
         while True:
