@@ -58,10 +58,12 @@ class Logger(object):
             
             obj['irrigation'] = self.decideIrrigation(obj)
             
+            obj['vIdeal'] = self.vlIdeal
+            obj['intVaria'] = self.intVaria
             
             
             # obj['timestamp'] = datetime.datetime.now()
-            # self.store_data(obj)
+            self.store_data(obj)
             if self.clb is not None:
                 self.clb(obj)
             time.sleep(15)

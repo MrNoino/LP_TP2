@@ -16,13 +16,14 @@ log = Logger()
 def index():
     return render_template('index.html')
 
-@socket.on('vlIdeal_update')
+@socket.on('update')
 def vlIdeal_update(msg):
+    if "vlIdeal" in msg :
+        log.vlIdeal = float(msg['vlIdeal'])
+    if "intVaria" in msg:
+        log.intVaria = float(msg['intVaria'])
     print('Received message: ', msg)
     
-@socket.on('intVaria_update')
-def intVaria_update(msg):
-    print('Received message: ', msg)
 
 def data_update(data):
     print(data)

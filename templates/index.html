@@ -5,15 +5,15 @@
     <h1 class="h2">Configuration</h1>
 </div>
 <div class="row">
-    <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3">
-        <div class="col"><h5>Recommended Soil Moisture Conditions:</h5></div>
-        <div class="col">
-            <label for="vIdeal">Ideal Value</label>
-            <input type="number" id="vIdeal">
+    <h5>Recommended Soil Moisture Conditions:</h5>
+    <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3">
+        <div class="col  input-group me-5">
+            <span class="input-group-text" for="vIdeal">Ideal Value (%)</span>
+            <input class="form-control" type="number" id="vIdeal" value="">
         </div>
-        <div class="col">
-            <label for="intVaria">Variation Range (%)</label>
-            <input type="number" id="intVaria">
+        <div class="col input-group">
+            <span class="input-group-text" for="intVaria">Variation Range (%)</span>
+            <input class="form-control" type="number" id="intVaria" value="">
         </div>
     </div>
 </div>
@@ -65,14 +65,14 @@
                         label: 'Probability of Rain (%)',
                         data: [],
                         backgroundColor: 'rgba(0, 0, 0, 0)',
-                        borderColor: '#f44336',
+                        borderColor: '#2196f3',
                         yAxisID: 'y',
                     },
                     {
                         label: 'Humidity (%RH)',
                         data: [],
                         backgroundColor: 'rgba(0, 0, 0, 0)',
-                        borderColor: '#2196f3',
+                        borderColor: '#f44336',
                         yAxisID: 'y1',
                     },
                     {
@@ -118,7 +118,8 @@
         socket.on('data_update', function (data) {
             data = JSON.parse(data);
 
-            
+            document.getElementById('vIdeal').value = data.vIdeal;
+            document.getElementById('intVaria').value = data.intVaria;
             $('#humidity').html(data.humidity + '%');
             $('#probRain').html(data.probRain + '%');
             $('#irrigation').html( data.irrigation[0] ? 'Done': ' ' );
@@ -146,18 +147,42 @@
 
         var inputvlIdeal = document.getElementById('vIdeal');
         inputvlIdeal.addEventListener('change', function(){
+            
+            inputValue = inputvlIdeal.value;
+            
+            // Defina os limites dinamicamente conforme necessário
+            var minLimit = 0;
+            var maxLimit = 100;
+            
+            if (inputValue < minLimit) {
+                this.value = minLimit;
+            } else if (inputValue > maxLimit) {
+                this.value = maxLimit;
+            }
 
             console.log(inputvlIdeal.value);
 
-            socket.emit('vlIdeal_update', {vlIdeal: inputvlIdeal.value});
+            socket.emit('update', {vlIdeal: inputvlIdeal.value});
         });
 
         var inputIntVaria = document.getElementById('intVaria');
         inputIntVaria.addEventListener('change', function(){
+            
+            inputValue = inputIntVaria.value;
+            
+            // Defina os limites dinamicamente conforme necessário
+            var minLimit = 0;
+            var maxLimit = 100;
+            
+            if (inputValue < minLimit) {
+                this.value = minLimit;
+            } else if (inputValue > maxLimit) {
+                this.value = maxLimit;
+            }
 
             console.log(inputIntVaria.value);
 
-            socket.emit('intVaria_update', {intVaria: inputIntVaria.value});
+            socket.emit('update', {intVaria: inputIntVaria.value});
         });
     </script>
 {% endblock %}
