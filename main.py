@@ -16,10 +16,17 @@ log = Logger()
 def index():
     return render_template('index.html')
 
+@socket.on('vlIdeal_update')
+def vlIdeal_update(msg):
+    print('Received message: ', msg)
+    
+@socket.on('intVaria_update')
+def intVaria_update(msg):
+    print('Received message: ', msg)
+
 def data_update(data):
     print(data)
     socket.emit('data_update', json.dumps(data, default=json_util.default))
-
 
 if __name__ == '__main__':
     log.on_data_updated(data_update)

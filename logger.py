@@ -10,6 +10,10 @@ import os
 import time
 
 class Logger(object):
+    vlIdeal = 80
+    intVaria = 20
+    probRainIdeal = 75
+    
     def __init__(self, port='/dev/ttyACM0', filename='data.csv'):
         '''self.ser = serial.Serial(port)
         self.i2c = board.I2C()
@@ -20,7 +24,17 @@ class Logger(object):
         self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
         self.thr.start()
+        
     
+    def decideIrrigation(self, obj):
+        
+        if(obj["humidity"] < self.vlIdeal):
+            if(obj["humidity"] < self.vlIdeal - self.intVaria):
+                if(obj["probRain"] < self.probRainIdeal):
+                    return True
+        
+        return False
+
     def read_data(self):
         while True:
             # data = self.ser.readline().decode()
@@ -39,23 +53,18 @@ class Logger(object):
                 if self.clb is not None:
                     self.clb(obj)'''
             
-            obj['winddir'] = float(random.random())
-            obj['windspeedmph'] = float(random.random())
-            obj['windgustdir'] = float(random.random())
-            obj['windspdmph_avg2m'] = float(random.random())
-            obj['winddir_avg2m'] = float(random.random())
-            obj['windgustmph_10m'] = float(random.random())
-            obj['windgustdir_10m'] = float(random.random())
-            obj['humidity'] = float(random.random())
-            obj['tempf'] = float(random.random())
-            obj['pressure'] = float(random.random())
-            obj['rainin'] = float(random.random())
-            obj['dailyrainin'] = float(random.random())
-            self.store_data(obj)
+            obj['humidity'] = float(random.random())*100
+            obj['probRain'] = float(random.random())*100
+            
+            obj['irrigation'] = self.decideIrrigation(obj)
+            
+            
+            
+            # obj['timestamp'] = datetime.datetime.now()
+            # self.store_data(obj)
             if self.clb is not None:
                 self.clb(obj)
-            time.sleep(5)
-                    
+            time.sleep(15)
     
     def store_data(self, data):
         file_exists = os.path.isfile(self.filename)
@@ -67,3 +76,4 @@ class Logger(object):
 
     def on_data_updated(self, clb):
         self.clb = clb
+        
