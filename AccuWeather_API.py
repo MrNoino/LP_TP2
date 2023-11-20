@@ -14,32 +14,38 @@ class AccuWeather:
 
         
 
-    def getWeather(self, endpoint = "daily/5day/", location_key = "272831", offset_day = 0):
+    def getWeather(self, endpoint = "daily/5day/", location_key = "272831", offset_day = 1):
 
         weather = requests.post(self.__url + endpoint + location_key, params= self.__params,).json()
 
-        if(offset_day < 0 or offset_day > 5):
+        if(offset_day < 0 or offset_day > 4):
 
-            return weather
+            return None
         
         else:
 
             weather = weather["DailyForecasts"][offset_day]
             return weather
         
-    def getRainProbability(self, offset_day = 0, part_of_day = "Day"):
+    def getRainProbability(self, offset_day = 1, part_of_day = "Day"):
 
         weather = self.getWeather(offset_day=offset_day)
 
-        return bool(weather[part_of_day]["RainProbability"])
+        if(weather):
+
+            return int(weather[part_of_day]["RainProbability"])
+        
+        else:
+
+            return weather
 
         
 
 #inicialização da API
-#api = AccuWeather()
+api = AccuWeather()
 
 #obter o tempo para o dia de amanha
 #print(api.getWeather(offset_day=1))
 
 #obter a probabilidade de chuva em percentagem para a parte da noite de hoje
-#print(api.getRainProbability(part_of_day="Night"))
+print(api.getRainProbability(part_of_day="Night"))
