@@ -42,10 +42,10 @@ class AccuWeather:
         
 
 #inicialização da API
-api = AccuWeather()
+# api = AccuWeather()
 
 #obter o tempo para o dia de amanha
 #print(api.getWeather(offset_day=1))
 
-#obter a probabilidade de chuva em percentagem para a parte da noite de hoje
-print(api.getRainProbability(part_of_day="Night"))
+#obter a probabilidade de chuva em percentagem para a parte da noite de amanhã
+# print(api.getRainProbability(part_of_day="Night"))
