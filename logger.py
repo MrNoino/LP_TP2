@@ -9,10 +9,8 @@ from AccuWeather_API import AccuWeather
 
 class Logger(object):
     
-    
-    
     def __init__(self, filename='data.csv'):
-        self.__probRainIdeal = None
+        self.__probRainIdeal = 75
         self.__vIdeal = None
         self.__intVaria = None
         self.filename = filename
@@ -20,18 +18,7 @@ class Logger(object):
         self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
         self.thr.start()
-        # Ler dados de config do ficheiro 
-        # last_line = self.read_last_lines(2)
-        # if(last_line != None):
-        #     dados = last_line[0].split(',')
-        #     self.humidity, self.probRain = float(dados[0]),float(dados[1])
-        #     self.irrigation = bool(dados[2])
-        #     self.vIdeal, self.intVaria = float(dados[3]),float(dados[4])
-        #     # print("Ultimos Dados: ", self.humidity)
-        #     # print("Ultimos Dados: ", self.probRain)
-        #     # print("Ultimos Dados: ", self.irrigation)
-        #     # print("Ultimos Dados: ", self.vIdeal)
-        #     # print("Ultimos Dados: ", self.intVaria)
+        self.read_config()
         
     def getVIdeal(self):
         return self.__vIdeal
@@ -47,14 +34,26 @@ class Logger(object):
         self.__intVaria = newIntVaria
         self.updateConfig()
         
-    # def updateConfig(self):
+    def updateConfig(self, filename='config.csv'):
         # Atualizar o ficheiro de config
+        with open(filename, 'w') as f:
+            writer = csv.DictWriter(f, lineterminator="\n", fieldnames=["IDEAL_HUMIDITY", "IDEAL_HIMIDITY_RANGE"])
+            writer.writeheader()
+            writer.writerow({"IDEAL_HUMIDITY": self.__vIdeal, "IDEAL_HIMIDITY_RANGE": self.__intVaria})
         
+    def read_config(self, filename='config.csv'):
+        file_exists = os.path.isfile(filename)
+        if file_exists:
+            with open(filename, 'r') as file:
+                lines = file.readlines()
+                if(lines != None):
+                    data = lines[1].split(',')
+                    self.__vIdeal, self.__intVaria = float(data[0]),float(data[1])
     
     def decideIrrigation(self, obj):
-        if(obj["humidity"] < self.vIdeal):
-            if(obj["humidity"] < self.vIdeal - self.intVaria):
-                if(obj["probRain"] < self.probRain):
+        if(obj["humidity"] < self.__vIdeal):
+            if(obj["humidity"] < self.__vIdeal - self.__intVaria):
+                if(obj["probRain"] < self.__probRain):
                     return True
         
         return False
@@ -67,19 +66,25 @@ class Logger(object):
                         
             obj['humidity'] = float(random.random())*100
             # obj['probRain'] = float(random.random())*100
-            obj['probRain'] = api.getRainProbability(part_of_day="Day")
+            obj['probRain'] = read_probRain()
             
             obj['irrigation'] = self.decideIrrigation(obj)
             
-            obj['vIdeal'] = self.vIdeal
-            obj['intVaria'] = self.intVaria
+            obj['vIdeal'] = self.__vIdeal
+            obj['intVaria'] = self.__intVaria
             
             # obj['timestamp'] = datetime.datetime.now()
             self.store_data(obj)
             if self.clb is not None:
                 self.clb(obj)
             time.sleep(10)
-            print("A")
+            
+    def read_probRain(self):
+        return api.getRainProbability(part_of_day="Day")
+        # if(obj['probRain'] is None):
+        #     self.read_probRain()
+        # else:
+        #     # escrever o valor colhido no ficheiro
     
     def store_data(self, data):
         file_exists = os.path.isfile(self.filename)

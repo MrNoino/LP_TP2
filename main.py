@@ -19,13 +19,12 @@ def index():
 @socket.on('update')
 def vlIdeal_update(msg):
     if "vlIdeal" in msg :
-        log.vIdeal = float(msg['vlIdeal'])
+        log.setVIdeal(float(msg['vlIdeal']))
     if "intVaria" in msg:
-        log.intVaria = float(msg['intVaria'])
+        log.setIntVaria(float(msg['intVaria']))
     print('Received message: ', msg)
     
 def data_update(data):
-    print('clb')
     print(data)
     socket.emit('data_update', json.dumps(data, default=json_util.default))
 

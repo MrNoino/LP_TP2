@@ -1,5 +1,5 @@
 Utilizar o AccuWeather API para ter a previsão do tempo (possibilidade de chuva no próximo dia).
-Descobrir a umidade do solo (pode ser random, não é o ideal)
+Descobrir a humidade do solo (pode ser random, não é o ideal)
 Determinar um valor ideal e intervalo de variação, configuravel.
 
 O cliente utiliza o html para ver os últimos 60 resultados

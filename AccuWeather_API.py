@@ -16,7 +16,13 @@ class AccuWeather:
 
     def getWeather(self, endpoint = "daily/5day/", location_key = "272831", offset_day = 1):
 
-        weather = requests.post(self.__url + endpoint + location_key, params= self.__params,).json()
+        weather = requests.post(self.__url + endpoint + location_key, params= self.__params,)
+
+        if(weather.status_code != 200):
+
+            return None
+
+        weather = weather.json()
 
         if(offset_day < 0 or offset_day > 4):
 
