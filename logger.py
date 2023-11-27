@@ -12,33 +12,43 @@ class Logger(object):
     
     
     def __init__(self, filename='data.csv'):
-        self.probRainIdeal = None
-        self.vIdeal = None
-        self.intVaria = None
-        self.probRain = None
-        self.humidity = None
-        self.irrigation = None
-    
+        self.__probRainIdeal = None
+        self.__vIdeal = None
+        self.__intVaria = None
         self.filename = filename
-        last_line = self.read_last_lines(2)
-        if(last_line != None):
-            dados = last_line[0].split(',')
-            self.humidity, self.probRain = float(dados[0]),float(dados[1])
-            self.irrigation = bool(dados[2])
-            self.vIdeal, self.intVaria = float(dados[3]),float(dados[4])
-            # print("Ultimos Dados: ", self.humidity)
-            # print("Ultimos Dados: ", self.probRain)
-            # print("Ultimos Dados: ", self.irrigation)
-            # print("Ultimos Dados: ", self.vIdeal)
-            # print("Ultimos Dados: ", self.intVaria)
-    
-        
         self.clb = None
         self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
         self.thr.start()
+        # Ler dados de config do ficheiro 
+        # last_line = self.read_last_lines(2)
+        # if(last_line != None):
+        #     dados = last_line[0].split(',')
+        #     self.humidity, self.probRain = float(dados[0]),float(dados[1])
+        #     self.irrigation = bool(dados[2])
+        #     self.vIdeal, self.intVaria = float(dados[3]),float(dados[4])
+        #     # print("Ultimos Dados: ", self.humidity)
+        #     # print("Ultimos Dados: ", self.probRain)
+        #     # print("Ultimos Dados: ", self.irrigation)
+        #     # print("Ultimos Dados: ", self.vIdeal)
+        #     # print("Ultimos Dados: ", self.intVaria)
         
+    def getVIdeal(self):
+        return self.__vIdeal
+    
+    def setVIdeal(self, newVIdeal):
+        self.__vIdeal = newVIdeal
+        self.updateConfig()
         
+    def getIntVaria(self):
+        return self.__intVaria
+    
+    def setIntVaria(self, newIntVaria):
+        self.__intVaria = newIntVaria
+        self.updateConfig()
+        
+    # def updateConfig(self):
+        # Atualizar o ficheiro de config
         
     
     def decideIrrigation(self, obj):
@@ -56,8 +66,8 @@ class Logger(object):
             obj = {}
                         
             obj['humidity'] = float(random.random())*100
-            obj['probRain'] = float(random.random())*100
-            # obj['probRain'] = api.getRainProbability(part_of_day="Day")
+            # obj['probRain'] = float(random.random())*100
+            obj['probRain'] = api.getRainProbability(part_of_day="Day")
             
             obj['irrigation'] = self.decideIrrigation(obj)
             
