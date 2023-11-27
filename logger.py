@@ -4,22 +4,23 @@ import datetime
 import csv
 import os
 import time
-from jproperties import Properties
+import configparser
 
 from AccuWeather_API import AccuWeather
 
 class Logger(object):
     
-    def __init__(self, filename='data.csv'):
+    def __init__(self, filename='LP_TP2/data.csv'):
         self.__probRainIdeal = 75
         self.__vIdeal = None
         self.__intVaria = None
+        self.read_config()
         self.filename = filename
         self.clb = None
-        self.thr = threading.Thread(target=self.read_data)
+        self.thr = threading.Thread(target=self.read_data,)
         self.thr.daemon = True
         self.thr.start()
-        self.read_config()
+        # self.thr.join()
 
 
     def getVIdeal(self):
@@ -38,29 +39,24 @@ class Logger(object):
 
 
     def write_propertie(self, key, value, filename='LP_TP2/config.properties'):
-        # Atualizar o ficheiro de config
-        p = Properties()
-        with open(filename, "w+b") as f:
-            p.load(f, "utf-8")
-            
-            p[key] = str(value)
+        config = configparser.ConfigParser()
+        config.read(filename)
+        
+        # Adiciona ou atualiza o novo valor
+        config['DEFAULT'][key] = str(value)
 
-            f.seek(0)
-            f.truncate(0)
-            p.store(f, encoding="utf-8")
+        # Escreve todas as informações de volta ao arquivo
+        with open(filename, 'w') as configfile:
+            config.write(configfile)
             
     def read_propertie(self, key, filename='LP_TP2/config.properties'):
         
-        p = Properties()
-                    
-        with open(filename, "rb") as f:
-            p.load(f, "utf-8")
-            # print(p.get(key)[0])
-            output = p.get(key)[0]
+        config = configparser.ConfigParser()
+        config.read(filename)
         
-        return output
-    
-    
+        return config['DEFAULT'][key]
+
+
     def update_config(self):
         self.write_propertie("huminity_ideal", self.__vIdeal)
         self.write_propertie("huminity_ideal_range", self.__intVaria)
@@ -84,7 +80,7 @@ class Logger(object):
             
             obj = {}
                         
-            obj['humidity'] = float(random.random())*100
+            obj['humidity'] = round(random.random() * 100, 5)
             obj['probRain'] = self.probRain()
             
             obj['irrigation'] = self.decideIrrigation(obj)
@@ -127,7 +123,7 @@ class Logger(object):
                 writer.writeheader()
             writer.writerow(data)
 
-       
+
     def read_last_lines(self, n):
         file_exists = os.path.isfile(self.filename)
         if file_exists:
