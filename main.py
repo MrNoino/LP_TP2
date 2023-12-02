@@ -17,7 +17,7 @@ def index():
 
 @socket.on('update')
 def vlIdeal_update(msg):
-    global log  # Usando a variável global log
+    global log
     if "vlIdeal" in msg :
         log.setVIdeal(float(msg['vlIdeal']))
     if "intVaria" in msg:
