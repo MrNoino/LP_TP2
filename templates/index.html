@@ -9,11 +9,11 @@
     <div class="d-flex justify-content-between flex-wrap align-items-center pb-2 mb-3">
         <div class="col  input-group me-5">
             <span class="input-group-text" for="vIdeal">Ideal Value (%)</span>
-            <input class="form-control" type="number" id="vIdeal" value="">
+            <input class="form-control" type="number" id="vIdeal" value="{{ vIdeal }}">
         </div>
         <div class="col input-group">
             <span class="input-group-text" for="intVaria">Variation Range (%)</span>
-            <input class="form-control" type="number" id="intVaria" value="">
+            <input class="form-control" type="number" id="intVaria" value="{{ intVaria }}">
         </div>
     </div>
 </div>
@@ -56,28 +56,30 @@
 
         var socket = io('http://' + document.domain + ':' + location.port);
         
+        var data_history = JSON.parse('{{ data_history | safe }}');  // Carregue os dados JSON enviado pelo Flask
+
         var atmChart = new Chart($('#atmChart'), {
             type: 'line',
             data: {
-                labels: [],
+                labels: data_history.timestamp,
                 datasets: [
                     {
                         label: 'Probability of Rain (%)',
-                        data: [],
+                        data: data_history.probRain,
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         borderColor: '#2196f3',
                         yAxisID: 'y',
                     },
                     {
                         label: 'Humidity (%RH)',
-                        data: [],
+                        data: data_history.humidity,
                         backgroundColor: 'rgba(0, 0, 0, 0)',
                         borderColor: '#f44336',
                         yAxisID: 'y1',
                     },
                     {
                         label: 'Irrigation',
-                        data: [],
+                        data: data_history.irrigation,
                         backgroundColor: 'rgba(232, 181, 35, 0.3)', // Cor de fundo das barras
                         borderColor: 'rgba(232, 181, 35, 1)', // Cor da borda das barras
                         borderWidth: 1, // Largura da borda das barras
@@ -128,7 +130,7 @@
             atmChart.data.datasets[0].data.push(data.probRain);
             atmChart.data.datasets[1].data.push(data.humidity);
             atmChart.data.datasets[2].data.push(data.irrigation);
-            atmChart.data.labels.push(moment().format('hh:mm:ss'));
+            atmChart.data.labels.push(data.timestamp);
 
             
             if (atmChart.data.datasets[0].data.length > 30) {

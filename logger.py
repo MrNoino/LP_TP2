@@ -81,7 +81,7 @@ class Logger(object):
             obj = {}
                         
             obj['humidity'] = round(random.random() * 100, 5)
-            obj['probRain'] = self.probRain()
+            obj['probRain'], obj['timestamp'] = self.probRain()
             
             obj['irrigation'] = self.decideIrrigation(obj)
             
@@ -93,7 +93,7 @@ class Logger(object):
             self.store_data(obj)
             if self.clb is not None:
                 self.clb(obj)
-            time.sleep(10)
+            time.sleep(600)
             
     def probRain(self):
         
@@ -114,9 +114,9 @@ class Logger(object):
                 print("API AccuWeather return ok.")
                 self.write_propertie("rain_probability", probRain)
                 self.write_propertie("datetime_rain_probability", now)
-                return probRain
+                return probRain, now.strftime("%Y-%m-%d %H:%M:%S")
             
-        return float(self.read_propertie("rain_probability"))
+        return float(self.read_propertie("rain_probability")), now.strftime("%Y-%m-%d %H:%M:%S")
 
 
     def store_data(self, data):
@@ -129,12 +129,21 @@ class Logger(object):
 
 
     def read_last_lines(self, n):
+        data = {'humidity': [], 'probRain': [], 'irrigation': [],'vIdeal': [], 'intVaria': [],'timestamp': []}
         file_exists = os.path.isfile(self.filename)
         if file_exists:
             with open(self.filename, 'r') as file:
                 lines = file.readlines()
                 last_n_lines = lines[-n:]
-                return last_n_lines
+                for line in last_n_lines:
+                    values = line.strip().split(',')
+                    data['humidity'].append(float(values[0]))
+                    data['probRain'].append(float(values[1]))
+                    data['timestamp'].append(values[2])
+                    data['irrigation'].append(values[3]=='True')
+                    data['vIdeal'].append(float(values[4]))
+                    data['intVaria'].append(float(values[5]))
+        return data
 
 
     def on_data_updated(self, clb):

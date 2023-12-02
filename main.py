@@ -13,7 +13,7 @@ log = Logger()
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', data_history=json.dumps(log.read_last_lines(20)), vIdeal=log.getVIdeal(), intVaria=log.getIntVaria())
 
 @socket.on('update')
 def vlIdeal_update(msg):
