@@ -17,7 +17,7 @@ class Logger(object):
         self.read_config()
         self.filename = filename
         self.clb = None
-        self.thr = threading.Thread(target=self.read_data,)
+        self.thr = threading.Thread(target=self.read_data)
         self.thr.daemon = True
         self.thr.start()
         # self.thr.join()
@@ -89,6 +89,7 @@ class Logger(object):
             obj['intVaria'] = self.__intVaria
             
             # obj['timestamp'] = datetime.datetime.now()
+            # obj['obj']= self.__str__() # Controle de objeto
             self.store_data(obj)
             if self.clb is not None:
                 self.clb(obj)
@@ -102,14 +103,17 @@ class Logger(object):
         now = datetime.datetime.now()
         # Adiciona 12 horas a tempo da última coleta
         after_12_hour = datetime.datetime.strptime(self.read_propertie("datetime_rain_probability"),
-                                                   "%Y-%m-%d %H:%M:%S") + datetime.timedelta(hours=12)
-        # print("Hora atual:", agora)
-        # print("Hora depois de 12 horas:", depois_de_12_horas)
+                                                   "%Y-%m-%d %H:%M:%S.%f") + datetime.timedelta(hours=12)
+        # print("Hora atual:",now)
+        # print("depois 12h:", after_12_hour)
 
         if (now > after_12_hour):
             probRain = api.getRainProbability(part_of_day="Day")
+            print("new value API AccuWeather.")
             if(probRain is not None):
+                print("API AccuWeather return ok.")
                 self.write_propertie("rain_probability", probRain)
+                self.write_propertie("datetime_rain_probability", now)
                 return probRain
             
         return float(self.read_propertie("rain_probability"))

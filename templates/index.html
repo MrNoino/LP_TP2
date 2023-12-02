@@ -122,7 +122,7 @@
             document.getElementById('intVaria').value = data.intVaria;
             $('#humidity').html(data.humidity + '%');
             $('#probRain').html(data.probRain + '%');
-            $('#irrigation').html( data.irrigation[0] ? 'Done': ' ' );
+            $('#irrigation').html(data.irrigation ? 'Done': ' ');
 
             
             atmChart.data.datasets[0].data.push(data.probRain);

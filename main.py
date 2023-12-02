@@ -3,7 +3,6 @@ import json
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-
 from logger import Logger
 
 app = Flask(__name__)
@@ -18,6 +17,7 @@ def index():
 
 @socket.on('update')
 def vlIdeal_update(msg):
+    global log  # Usando a variável global log
     if "vlIdeal" in msg :
         log.setVIdeal(float(msg['vlIdeal']))
     if "intVaria" in msg:
@@ -30,4 +30,5 @@ def data_update(data):
 
 if __name__ == '__main__':
     log.on_data_updated(data_update)
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
+
